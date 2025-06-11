@@ -1,4 +1,4 @@
-// src/components/VerifyOTP.tsx
+
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -9,7 +9,7 @@ import { makeErrorDisable, resetOtpVerification } from '../redux/reducers/authSl
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Clock, RefreshCw, ArrowLeft, CheckCircle, Mail } from "lucide-react";
 
-// Validation Schema
+
 const otpSchema = Yup.object().shape({
   otp: Yup.string()
     .matches(/^[0-9]{6}$/, 'OTP must be 6 digits')
@@ -20,7 +20,7 @@ const VerifyOTP: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [countdown, setCountdown] = useState(600); // 10 minutes in seconds
+  const [countdown, setCountdown] = useState(600); 
   
   const { OtpVerification, loading } = useAppSelector((state) => state.user);
   const email = location.state?.email;
@@ -29,7 +29,7 @@ const VerifyOTP: React.FC = () => {
     otp: '',
   };
 
-  // Animation variants
+  
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
@@ -58,7 +58,7 @@ const VerifyOTP: React.FC = () => {
     },
   };
 
-  // Countdown timer
+  
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -73,14 +73,14 @@ const VerifyOTP: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Redirect if no email in location state
+  
   useEffect(() => {
     if (!email) {
       navigate('/signup');
     }
   }, [email, navigate]);
 
-  // Handle successful OTP verification
+  
   useEffect(() => {
     if (OtpVerification.success) {
       setTimeout(() => {

@@ -41,9 +41,9 @@ const Dashboard: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        if (!user) {
-          throw new Error('Please log in to view your dashboard.');
-        }
+        // if (!user) {
+        //   throw new Error('Please log in to view your dashboard.');
+        // }
 
         if (preferences.length === 0) {
           setError('No preferences selected. Please update your preferences.');
@@ -82,6 +82,48 @@ const Dashboard: React.FC = () => {
       toast.error('Please log in to like articles', { duration: 4000, position: 'top-right' });
       return;
     }
+
+    
+    const article = articles.find((a) => a._id === articleId);
+    if (article?.likes?.includes(user.id)) {
+      try {
+      const response = await axiosInstance.post(
+        `/article/articles/removelike/${articleId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setArticles((prevArticles) =>
+          prevArticles.map((article) =>
+            article._id === articleId
+              ? {
+                  ...article,
+                  likes: response.data.article.likes, 
+                  dislikes: response.data.article.dislikes,
+                }
+              : article
+          )
+        );
+        toast.success('Like removed from article!', { duration: 2000, position: 'top-center' });
+        return
+      } else {
+        
+        toast.error(response.data.message || 'Failed to remove like from article', { duration: 4000, position: 'top-right' });
+        return
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to remove like from article';
+      toast.error(errorMessage, { duration: 4000, position: 'top-right' });
+      return
+    }
+    }
+
+    // Check if user has already disliked the article
+    // if (article?.dislikes?.includes(user.id)) {
+    //   toast.error('You have already disliked this article! You cannot like it.', { duration: 3000, position: 'top-right' });
+    //   return;
+    // }
+
     try {
       const response = await axiosInstance.post(
         `/article/articles/like/${articleId}`,
@@ -95,16 +137,22 @@ const Dashboard: React.FC = () => {
               ? {
                   ...article,
                   likes: response.data.article.likes,
-                  dislikes: response.data.article.dislikes,
+                  dislikes: response.data.article.dislikes, 
                 }
               : article
           )
         );
-        toast.success('Article liked!', { duration: 2000, position: 'top-right' });
+        toast.success('Article liked!', { duration: 2000, position: 'top-center' });
+        return
+      } else {
+        
+        toast.error(response.data.message || 'Failed to like article', { duration: 4000, position: 'top-right' });
+        return
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Failed to like article';
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to like article';
       toast.error(errorMessage, { duration: 4000, position: 'top-right' });
+      return
     }
   };
 
@@ -113,6 +161,48 @@ const Dashboard: React.FC = () => {
       toast.error('Please log in to dislike articles', { duration: 4000, position: 'top-right' });
       return;
     }
+
+    
+    const article = articles.find((a) => a._id === articleId);
+    if (article?.dislikes?.includes(user.id)) {
+      try {
+      const response = await axiosInstance.post(
+        `/article/articles/removeDislike/${articleId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setArticles((prevArticles) =>
+          prevArticles.map((article) =>
+            article._id === articleId
+              ? {
+                  ...article,
+                  likes: response.data.article.likes,
+                  dislikes: response.data.article.dislikes, 
+                }
+              : article
+          )
+        );
+        toast.success('Article Dislike removed!', { duration: 2000, position: 'top-center' });
+        return
+      } else {
+        
+        toast.error(response.data.message || 'Failed to remove dislike from article', { duration: 4000, position: 'top-right' });
+        return
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to remove dislike from article';
+      toast.error(errorMessage, { duration: 4000, position: 'top-right' });
+      return
+    }
+    }
+
+    // Check if user has already liked the article
+    // if (article?.likes?.includes(user.id)) {
+    //   toast.error('You have already liked this article! You cannot dislike it.', { duration: 3000, position: 'top-right' });
+    //   return;
+    // }
+
     try {
       const response = await axiosInstance.post(
         `/article/articles/dislike/${articleId}`,
@@ -125,16 +215,19 @@ const Dashboard: React.FC = () => {
             article._id === articleId
               ? {
                   ...article,
-                  likes: response.data.article.likes,
+                  likes: response.data.article.likes, 
                   dislikes: response.data.article.dislikes,
                 }
               : article
           )
         );
-        toast.success('Article disliked!', { duration: 2000, position: 'top-right' });
+        toast.success('Article disliked!', { duration: 2000, position: 'top-center' });
+      } else {
+        
+        toast.error(response.data.message || 'Failed to dislike article', { duration: 4000, position: 'top-right' });
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Failed to dislike article';
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to dislike article';
       toast.error(errorMessage, { duration: 4000, position: 'top-right' });
     }
   };
@@ -207,9 +300,11 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Helper function to check if article is blocked by current user
+  
   const isArticleBlocked = (article: Article) => {
-    return article.blocks?.includes(user?._id || '') || false;
+    console.log("article.blocks", article.blocks, "user", user?.id);
+    
+    return article.blocks?.includes(user?.id || '') || false;
   };
 
   if (loading) {
@@ -360,7 +455,7 @@ const Dashboard: React.FC = () => {
                           <ThumbsUp
                             size={20}
                             className={
-                              !blocked && article.likes?.includes(user._id) 
+                              !blocked && article.likes?.includes(user.id) 
                                 ? 'text-indigo-600 fill-indigo-600' 
                                 : blocked 
                                 ? 'text-gray-400' 
@@ -383,7 +478,7 @@ const Dashboard: React.FC = () => {
                           <ThumbsDown
                             size={20}
                             className={
-                              !blocked && article.dislikes?.includes(user._id) 
+                              !blocked && article.dislikes?.includes(user.id) 
                                 ? 'text-red-600 fill-red-600' 
                                 : blocked 
                                 ? 'text-gray-400' 
@@ -415,7 +510,7 @@ const Dashboard: React.FC = () => {
                         )}
                       </div>
                       
-                      {user._id === article.author._id && (
+                      {user.id === article.author._id && (
                         <Link
                           to={`/edit-article/${article._id}`}
                           className={

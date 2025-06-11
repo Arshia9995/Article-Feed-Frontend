@@ -10,7 +10,7 @@ interface UserState {
   userDetails: IUser | null;
   signupData: IUserSignupData | null; 
   
-  // OTP Verification state
+  
   OtpVerification: {
     loading: boolean;
     success: boolean;
@@ -54,7 +54,7 @@ const userSlice = createSlice({
         error: null,
       };
     },
-    // Add manual logout action for fallback scenarios
+    
     logoutUser: (state) => {
       state.user = null;
       state.error = null;
@@ -67,7 +67,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // User Signup Cases
+      
       .addCase(userSignup.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -83,7 +83,7 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // OTP Verification Cases - UPDATED
+      
       .addCase(verifyOtp.pending, (state) => {
         state.OtpVerification.loading = true;
         state.OtpVerification.error = null;
@@ -92,9 +92,9 @@ const userSlice = createSlice({
         state.OtpVerification.loading = false;
         state.OtpVerification.success = true;
         state.OtpVerification.error = null;
-        // Store user data in Redux after successful OTP verification
+        
         state.user = action.payload.user;
-        // Clear signup data since registration is complete
+        
         state.signupData = null;
       })
       .addCase(verifyOtp.rejected, (state, action) => {
@@ -103,7 +103,7 @@ const userSlice = createSlice({
         state.OtpVerification.error = action.payload as string;
       })
       
-      // User Login Cases
+      
       .addCase(userLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -118,7 +118,7 @@ const userSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // User Logout Cases
+      
       .addCase(userLogout.pending, (state) => {
         console.log("pending in logout");
         state.loading = true;
@@ -134,12 +134,12 @@ const userSlice = createSlice({
       .addCase(userLogout.rejected, (state, action) => {
         console.log("rejected in logout");
         state.loading = false;
-        // Clear user data even if API fails
+        
         state.user = null;
         state.OtpVerification.success = false;
         state.error = action.payload as string | null;
       })
-        // Update Profile Cases
+      
       .addCase(updateProfile.pending, (state) => {
         state.loading = true;
         state.error = null;

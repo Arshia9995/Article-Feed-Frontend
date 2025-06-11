@@ -118,7 +118,7 @@ const EditArticle: React.FC = () => {
     if (image) {
       formDataToSend.append('image', image);
     }
-    // Add user ID (assuming it's available in article.author._id)
+    
     if (article?.author?._id) {
       formDataToSend.append('userId', article.author._id);
     }

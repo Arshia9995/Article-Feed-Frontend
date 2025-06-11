@@ -1,4 +1,4 @@
-// src/store/actions/userActions.ts
+
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { IUserSignupData, IOtpVerification, IUpdateProfileData } from "../../types/index";
 
@@ -7,7 +7,7 @@ import {  handleError } from "../../config/configuration";
 import type { ApiError } from "../../config/configuration";
 import axiosInstance from "../../config/api";
 
-// User Signup Action
+// User Signup 
 export const userSignup = createAsyncThunk(
   'user/userSignup',
   async (userCredentials: IUserSignupData, { rejectWithValue }) => {
@@ -30,7 +30,7 @@ export const userSignup = createAsyncThunk(
   }
 );
 
-// OTP Verification Action
+// OTP Verification
 export const verifyOtp = createAsyncThunk(
   'user/verifyOtp',
   async (otpData: IOtpVerification, { rejectWithValue }) => {
@@ -54,7 +54,7 @@ export const verifyOtp = createAsyncThunk(
 );
 
 
-// Login Action
+// Login 
 export const userLogin = createAsyncThunk(
   'user/userLogin',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -107,7 +107,7 @@ export const userLogout = createAsyncThunk(
 );
 
 
-// Update Profile Action
+// Update Profile 
 export const updateProfile = createAsyncThunk(
   'user/updateProfile',
   async (profileData: IUpdateProfileData, { rejectWithValue }) => {

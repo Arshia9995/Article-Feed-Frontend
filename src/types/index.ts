@@ -1,7 +1,3 @@
-
-
-
-// src/interfaces/IUserSignup.ts
 export interface IUserSignupData {
   firstName: string;
   lastName: string;
@@ -12,9 +8,9 @@ export interface IUserSignupData {
   preferences?: string[];
 }
 
-// src/interfaces/IUser.ts
+
 export interface IUser {
-  _id: string;
+  id: string;
   firstName: string;
   lastName: string;
   phone: string;
@@ -25,13 +21,13 @@ export interface IUser {
   updatedAt: Date;
 }
 
-// src/interfaces/IOtp.ts
+
 export interface IOtpVerification {
   email: string;
   otp: string;
 }
 
-// src/types/ApiError.ts
+
 export interface ApiError {
   message: string;
   error?: any;

@@ -22,11 +22,11 @@ const Profile: React.FC = () => {
   const loading = useSelector((state: RootState) => state.user.loading);
   const error = useSelector((state: RootState) => state.user.error);
 
-  // State for password visibility
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Formik setup
+  
   const formik = useFormik({
     initialValues: {
       firstName: user?.firstName || '',
@@ -77,7 +77,7 @@ const Profile: React.FC = () => {
     },
   });
 
-  // Load user data on mount
+  
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -95,7 +95,7 @@ const Profile: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Toggle category preference
+  
   const togglePreference = (category: string) => {
     const currentPreferences = formik.values.preferences;
     if (currentPreferences.includes(category)) {

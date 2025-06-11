@@ -17,7 +17,7 @@ export interface CustomResponse<T = unknown> {
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: baseUrl,
   // timeout: 10000,
-  withCredentials: true, // Send cookies with requests
+  withCredentials: true, 
   headers: {
     'Content-Type': 'application/json',
   },

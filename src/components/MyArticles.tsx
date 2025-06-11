@@ -26,6 +26,7 @@ interface Article {
   updatedAt: string;
   views?: number;
   likes?: number;
+  dislikes?: number; 
 }
 
 const MyArticles: React.FC = () => {
@@ -125,6 +126,11 @@ const MyArticles: React.FC = () => {
   };
 
   const truncateContent = (content: string, maxLength: number = 150) => {
+    
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(content);
+    if (isObjectId) {
+      return '[Content Unavailable]'; 
+    }
     if (content.length <= maxLength) return content;
     return content.substring(0, maxLength) + '...';
   };
@@ -288,6 +294,9 @@ const MyArticles: React.FC = () => {
                         )}
                         {article.likes !== undefined && (
                           <span>❤️ {article.likes}</span>
+                        )}
+                        {article.dislikes !== undefined && (
+                          <span>👎 {article.dislikes}</span>
                         )}
                       </div>
                     </div>

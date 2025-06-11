@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  // Fix 1: Separate the useSelector calls
+  
   const user = useSelector((state: RootState) => state.user.user);
   const loading = useSelector((state: RootState) => state.user.loading);
 
@@ -17,23 +17,26 @@ const Navbar: React.FC = () => {
     try {
       console.log('Logout initiated');
       
-      // Dispatch the logout action (backend will clear cookies)
+      
       const result = await dispatch(userLogout() as any);
+
+      console.log("resulttttt", result);
+      
       
       if (userLogout.fulfilled.match(result)) {
         console.log('Logout successful, navigating to login');
         navigate("/login", { replace: true });
       } else if (userLogout.rejected.match(result)) {
         console.log('Logout API failed, but clearing local state anyway');
-        // Even if API fails, clear local state and navigate
+        
         dispatch(logoutUser());
         navigate("/login", { replace: true });
       }
     } catch (error) {
       console.error('Logout error:', error);
-      // Fallback: clear local state and navigate even if there's an error
+      
       dispatch(logoutUser());
-      navigate("/login", { replace: true });
+      
     }
   };
 
@@ -48,13 +51,23 @@ const Navbar: React.FC = () => {
             ✨ InsightFeed
           </Link>
           <div className="flex space-x-4 items-center">
-            {/* Always show Dashboard */}
+            {/* Always show Home */}
             <Link
-              to="/dashboard"
+              to="/"
               className="text-gray-600 hover:text-indigo-600 font-medium transition"
             >
-              Dashboard
+              Home
             </Link>
+
+            {/* Show Dashboard only when user is logged in */}
+            {user && (
+              <Link
+                to="/dashboard"
+                className="text-gray-600 hover:text-indigo-600 font-medium transition"
+              >
+                Dashboard
+              </Link>
+            )}
 
             {user ? (
               <>

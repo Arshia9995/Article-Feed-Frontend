@@ -22,6 +22,7 @@ interface Article {
   updatedAt: string;
   views?: number;
   likes?: number;
+  dislikes?: number; 
 }
 
 const ArticleDetail: React.FC = () => {
@@ -168,6 +169,9 @@ const ArticleDetail: React.FC = () => {
                 )}
                 {article.likes !== undefined && (
                   <span>❤️ {article.likes}</span>
+                )}
+                {article.dislikes !== undefined && (
+                  <span>👎 {article.dislikes}</span>
                 )}
               </div>
             </div>

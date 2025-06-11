@@ -1,4 +1,4 @@
-// src/components/Signup.tsx
+
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Phone, Calendar, Lock, UserPlus, Heart, Music, Camera, Gamepad2, Book, Coffee } from "lucide-react";
 import type { IUserSignupData } from '../types';
 
-// Validation Schema
+
 const signupSchema = Yup.object().shape({
   firstName: Yup.string()
     .min(2, 'First name must be at least 2 characters')
@@ -56,7 +56,7 @@ const Signup: React.FC = () => {
     preferences: [],
   };
 
-  // Animation variants
+  
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },

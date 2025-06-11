@@ -1,4 +1,4 @@
-// src/components/Login.tsx
+
 import React, { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -9,13 +9,13 @@ import { makeErrorDisable } from '../redux/reducers/authSlice';
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 
-// Login form data interface
+
 interface ILoginData {
   email: string;
   password: string;
 }
 
-// Validation Schema
+
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Invalid email address')
@@ -31,7 +31,7 @@ const Login: React.FC = () => {
   const { loading, error, user } = useAppSelector((state) => state.user);
   const [showPassword, setShowPassword] = React.useState(false);
   
-  // Debug: Log the entire Redux state
+  
   const fullUserState = useAppSelector((state) => state.user);
   console.log('Full Redux user state:', fullUserState);
   console.log('User from state:', user);
@@ -43,7 +43,7 @@ const Login: React.FC = () => {
     password: '',
   };
 
-  // Animation variants
+
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
@@ -58,7 +58,7 @@ const Login: React.FC = () => {
     tap: { scale: 0.95 },
   };
 
-  // Redirect on successful login - Updated to navigate to home page
+  
   useEffect(() => {
     console.log('useEffect triggered, user:', user);
     if (user) {
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Handle form submission
+  
   const handleSubmit = async (values: ILoginData) => {
     console.log('Form submission started with values:', values);
     try {
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
         console.log('Login successful, payload:', result.payload);
         console.log('User from payload:', result.payload?.user);
         
-        // Force immediate navigation as backup
+        
         if (result.payload?.user) {
           console.log('Attempting immediate navigation...');
           navigate("/", { replace: true });
@@ -101,7 +101,7 @@ const Login: React.FC = () => {
     }
   };
 
-  // Clear error on component unmount
+  
   useEffect(() => {
     return () => {
       dispatch(makeErrorDisable());

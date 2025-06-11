@@ -10,7 +10,7 @@ const CATEGORIES = [
   'entertainment', 'business', 'science', 'lifestyle', 'education',
 ];
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+const MAX_FILE_SIZE = 5 * 1024 * 1024; 
 
 const ArticleForm: React.FC = () => {
   const navigate = useNavigate();
@@ -28,12 +28,12 @@ const ArticleForm: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const validateFile = (file: File): string | null => {
-    // Check file size
+    
     if (file.size > MAX_FILE_SIZE) {
       return 'File size must be less than 5MB';
     }
 
-    // Check file type
+    
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return 'Only JPG, PNG, GIF, and WebP files are allowed';
@@ -46,17 +46,17 @@ const ArticleForm: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file
+    
     const validationError = validateFile(file);
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    setError(''); // Clear any previous errors
+    setError(''); 
     setImage(file);
 
-    // Create preview
+   
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target?.result as string);
@@ -74,7 +74,7 @@ const ArticleForm: React.FC = () => {
 
   const addTag = () => {
     const tag = tagInput.trim().toLowerCase();
-    if (tag && !tags.includes(tag) && tags.length < 10) { // Limit to 10 tags
+    if (tag && !tags.includes(tag) && tags.length < 10) { 
       setTags([...tags, tag]);
       setTagInput('');
     }
@@ -104,7 +104,7 @@ const ArticleForm: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    // Validate form
+   
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -120,14 +120,14 @@ const ArticleForm: React.FC = () => {
       formData.append('content', content.trim());
       formData.append('category', category);
       
-      // Append tags individually
+      
       tags.forEach(tag => formData.append('tags', tag));
       
       if (image) {
         formData.append('image', image);
       }
 
-      // Debug: Log FormData contents
+      
       console.log('FormData contents:');
       for (let [key, value] of formData.entries()) {
         console.log(key, value);
@@ -145,15 +145,15 @@ const ArticleForm: React.FC = () => {
             setUploadProgress(percentCompleted);
           }
         },
-        timeout: 30000, // 30 second timeout
+        timeout: 30000, 
       });
 
       console.log('Article created successfully:', response.data);
       
-      // Show success message
+      
       alert('Article created successfully!');
       
-      // Navigate to home or article page
+      
       navigate('/');
       
     } catch (err: any) {
@@ -162,15 +162,15 @@ const ArticleForm: React.FC = () => {
       let errorMessage = 'Failed to create article';
       
       if (err.response) {
-        // Server responded with error status
+        
         errorMessage = err.response.data?.message || err.response.data?.error || errorMessage;
         console.error('Server error:', err.response.data);
       } else if (err.request) {
-        // Request was made but no response received
+        
         errorMessage = 'Network error. Please check your connection and try again.';
         console.error('Network error:', err.request);
       } else {
-        // Something else happened
+        
         errorMessage = err.message || errorMessage;
         console.error('Error:', err.message);
       }
