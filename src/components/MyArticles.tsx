@@ -5,7 +5,7 @@ import type { RootState } from '../redux/store';
 import axiosInstance from '../config/api';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Eye, Edit, Trash2, CheckCircle } from 'lucide-react'; // Added CheckCircle for Publish button
 import toast, { Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
@@ -26,7 +26,8 @@ interface Article {
   updatedAt: string;
   views?: number;
   likes?: number;
-  dislikes?: number; 
+  dislikes?: number;
+  published: boolean; // Added published field
 }
 
 const MyArticles: React.FC = () => {
@@ -34,6 +35,7 @@ const MyArticles: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [publishLoading, setPublishLoading] = useState<string | null>(null); // Added for publish button loading state
 
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -116,6 +118,58 @@ const MyArticles: React.FC = () => {
     }
   };
 
+  const handlePublishArticle = async (articleId: string, articleTitle: string) => {
+    const result = await Swal.fire({
+      title: 'Publish Article?',
+      text: `Do you want to publish "${articleTitle}"? It will be visible to all users.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, publish it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      setPublishLoading(articleId);
+
+      const response = await axiosInstance.patch(`/article/publish/${articleId}`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      const data = response.data;
+
+      if (data.success) {
+        setArticles(prev =>
+          prev.map(article =>
+            article._id === articleId ? { ...article, published: true } : article
+          )
+        );
+        toast.success('Article published successfully!', {
+          duration: 3000,
+          position: 'top-right',
+        });
+      } else {
+        throw new Error(data.message || 'Failed to publish article');
+      }
+    } catch (err: any) {
+      console.error('Error publishing article:', err);
+      toast.error(err.response?.data?.message || err.message || 'Failed to publish article', {
+        duration: 4000,
+        position: 'top-right',
+      });
+    } finally {
+      setPublishLoading(null);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -126,10 +180,9 @@ const MyArticles: React.FC = () => {
   };
 
   const truncateContent = (content: string, maxLength: number = 150) => {
-    
     const isObjectId = /^[0-9a-fA-F]{24}$/.test(content);
     if (isObjectId) {
-      return '[Content Unavailable]'; 
+      return '[Content Unavailable]';
     }
     if (content.length <= maxLength) return content;
     return content.substring(0, maxLength) + '...';
@@ -250,9 +303,18 @@ const MyArticles: React.FC = () => {
                   )}
 
                   <div className="p-6">
-                    <div className="mb-3">
+                    <div className="mb-3 flex justify-between items-center">
                       <span className="inline-block bg-indigo-100 text-indigo-800 text-xs font-medium px-3 py-1 rounded-full capitalize">
                         {article.category}
+                      </span>
+                      <span
+                        className={`text-xs font-medium px-3 py-1 rounded-full ${
+                          article.published
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {article.published ? 'Published' : 'Draft'}
                       </span>
                     </div>
 
@@ -316,6 +378,20 @@ const MyArticles: React.FC = () => {
                       >
                         <Edit size={18} />
                       </Link>
+                      {!article.published && (
+                        <button
+                          onClick={() => handlePublishArticle(article._id, article.title)}
+                          disabled={publishLoading === article._id}
+                          className="p-2 bg-green-100 hover:bg-green-200 disabled:bg-green-50 text-green-600 disabled:text-green-300 rounded-full transition-colors"
+                          title="Publish Article"
+                        >
+                          {publishLoading === article._id ? (
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                          ) : (
+                            <CheckCircle size={18} />
+                          )}
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDeleteArticle(article._id, article.title)}
                         disabled={deleteLoading === article._id}

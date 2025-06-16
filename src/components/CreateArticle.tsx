@@ -4,13 +4,14 @@ import { Upload, X, Plus, Tag, AlertCircle, FileText, Image, Layers, Hash, Spark
 import axiosInstance from '../config/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const CATEGORIES = [
   'sports', 'politics', 'space', 'technology', 'health',
   'entertainment', 'business', 'science', 'lifestyle', 'education',
 ];
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; 
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const ArticleForm: React.FC = () => {
   const navigate = useNavigate();
@@ -28,12 +29,10 @@ const ArticleForm: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const validateFile = (file: File): string | null => {
-    
     if (file.size > MAX_FILE_SIZE) {
       return 'File size must be less than 5MB';
     }
 
-    
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return 'Only JPG, PNG, GIF, and WebP files are allowed';
@@ -46,17 +45,15 @@ const ArticleForm: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    
     const validationError = validateFile(file);
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    setError(''); 
+    setError('');
     setImage(file);
 
-   
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target?.result as string);
@@ -74,7 +71,7 @@ const ArticleForm: React.FC = () => {
 
   const addTag = () => {
     const tag = tagInput.trim().toLowerCase();
-    if (tag && !tags.includes(tag) && tags.length < 10) { 
+    if (tag && !tags.includes(tag) && tags.length < 10) {
       setTags([...tags, tag]);
       setTagInput('');
     }
@@ -104,7 +101,6 @@ const ArticleForm: React.FC = () => {
     e.preventDefault();
     setError('');
 
-   
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -119,15 +115,11 @@ const ArticleForm: React.FC = () => {
       formData.append('title', title.trim());
       formData.append('content', content.trim());
       formData.append('category', category);
-      
-      
       tags.forEach(tag => formData.append('tags', tag));
-      
       if (image) {
         formData.append('image', image);
       }
 
-      
       console.log('FormData contents:');
       for (let [key, value] of formData.entries()) {
         console.log(key, value);
@@ -136,7 +128,6 @@ const ArticleForm: React.FC = () => {
       const response = await axiosInstance.post('/article/create', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
-          
         },
         withCredentials: true,
         onUploadProgress: (progressEvent) => {
@@ -145,36 +136,65 @@ const ArticleForm: React.FC = () => {
             setUploadProgress(percentCompleted);
           }
         },
-        timeout: 30000, 
+        timeout: 30000,
       });
 
       console.log('Article created successfully:', response.data);
-      
-      
-      alert('Article created successfully!');
-      
-      
+
+      // Show SweetAlert2 confirmation dialog
+      const result = await Swal.fire({
+        title: 'Article Created!',
+        text: 'Do you want to publish this article now?',
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonText: 'Publish',
+        cancelButtonText: 'Save as Draft',
+        buttonsStyling: false,
+        customClass: {
+          confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded-lg mr-2 hover:bg-blue-700 transition-colors',
+          cancelButton: 'bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors',
+        },
+      });
+
+      if (result.isConfirmed) {
+        // User chose to publish
+        try {
+          await axiosInstance.patch(`/article/publish/${response.data.article._id}`, {}, {
+            withCredentials: true,
+          });
+          Swal.fire({
+            title: 'Published!',
+            text: 'Your article has been published successfully.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } catch (publishError: any) {
+          console.error('Error publishing article:', publishError);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to publish article. It has been saved as a draft.',
+            icon: 'error',
+          });
+        }
+      }
+
+      // Navigate to my-articles regardless of publish choice
       navigate('/my-articles');
-      
+
     } catch (err: any) {
       console.error('Error creating article:', err);
-      
       let errorMessage = 'Failed to create article';
-      
       if (err.response) {
-        
         errorMessage = err.response.data?.message || err.response.data?.error || errorMessage;
         console.error('Server error:', err.response.data);
       } else if (err.request) {
-        
         errorMessage = 'Network error. Please check your connection and try again.';
         console.error('Network error:', err.request);
       } else {
-        
         errorMessage = err.message || errorMessage;
         console.error('Error:', err.message);
       }
-      
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -259,9 +279,6 @@ const ArticleForm: React.FC = () => {
                   Article Title <span className="text-red-500">*</span>
                 </label>
               </div>
-              {/* <p className="text-sm text-gray-600 ml-11">
-                Write a compelling title that captures your article's main idea (minimum 5 characters)
-              </p> */}
               <div className="ml-11">
                 <input
                   type="text"
@@ -298,9 +315,6 @@ const ArticleForm: React.FC = () => {
                   Article Content <span className="text-red-500">*</span>
                 </label>
               </div>
-              {/* <p className="text-sm text-gray-600 ml-11">
-                Write your full article content here. Be detailed and engaging (minimum 50 characters)
-              </p> */}
               <div className="ml-11">
                 <textarea
                   value={content}
@@ -335,9 +349,6 @@ const ArticleForm: React.FC = () => {
                   Category <span className="text-red-500">*</span>
                 </label>
               </div>
-              {/* <p className="text-sm text-gray-600 ml-11">
-                Choose the category that best fits your article's topic
-              </p> */}
               <div className="ml-11">
                 <select
                   value={category}
@@ -365,9 +376,6 @@ const ArticleForm: React.FC = () => {
                   Tags
                 </label>
               </div>
-              {/* <p className="text-sm text-gray-600 ml-11">
-                Add relevant tags to help readers discover your article (maximum 10 tags)
-              </p> */}
               <div className="ml-11">
                 <div className="flex gap-3">
                   <input
@@ -390,7 +398,6 @@ const ArticleForm: React.FC = () => {
                   </button>
                 </div>
                 
-                {/* Tags Display */}
                 {tags.length > 0 && (
                   <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
                     <div className="flex flex-wrap gap-2 mb-2">
@@ -492,7 +499,7 @@ const ArticleForm: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-3">
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    saving Article...
+                    Saving Article...
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-3">
@@ -502,7 +509,7 @@ const ArticleForm: React.FC = () => {
                 )}
               </button>
               <p className="text-center text-sm text-gray-500 mt-3">
-                Your article will be published immediately after submission
+                Your article will be saved and you can choose to publish it
               </p>
             </div>
           </form>
