@@ -170,6 +170,7 @@ const ArticleList: React.FC = () => {
           response = await axiosInstance.get('/article/getarticles-by-preferences', {
             params: { categories: preferences.join(',') },
             headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
           });
         } else {
           response = await axiosInstance.get('/article/latest', {
