@@ -302,7 +302,7 @@ const Dashboard: React.FC = () => {
 
   
   const isArticleBlocked = (article: Article) => {
-    console.log("article.blocks", article.blocks, "user", user?.id);
+    console.log("article.blocks", article.blocks, "user", user);
     
     return article.blocks?.includes(user?.id || '') || false;
   };

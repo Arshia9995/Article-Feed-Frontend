@@ -154,7 +154,7 @@ const ArticleForm: React.FC = () => {
       alert('Article created successfully!');
       
       
-      navigate('/');
+      navigate('/my-articles');
       
     } catch (err: any) {
       console.error('Error creating article:', err);
@@ -492,12 +492,12 @@ const ArticleForm: React.FC = () => {
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-3">
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    Publishing Article...
+                    saving Article...
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-3">
                     <Sparkles className="w-5 h-5" />
-                    Publish Article
+                    Save Article
                   </div>
                 )}
               </button>
