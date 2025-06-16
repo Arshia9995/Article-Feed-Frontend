@@ -180,6 +180,7 @@ const ArticleList: React.FC = () => {
         // For non-logged-in users: always fetch latest articles
         response = await axiosInstance.get('/article/latest', {
           headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
         });
       }
 
