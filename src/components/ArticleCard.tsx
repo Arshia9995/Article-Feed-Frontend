@@ -209,14 +209,14 @@ const ArticleList: React.FC = () => {
     }
   };
 
-  const handleArticleClick = (e: React.MouseEvent, articleId: string) => {
-    if (!user) {
-      e.preventDefault();
-      // Prevent any navigation for non-logged users
-      return;
-    }
-    // For logged-in users, navigation will proceed normally
-  };
+  // const handleArticleClick = (e: React.MouseEvent, articleId: string) => {
+  //   if (!user) {
+  //     e.preventDefault();
+  //     // Prevent any navigation for non-logged users
+  //     return;
+  //   }
+  //   // For logged-in users, navigation will proceed normally
+  // };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },

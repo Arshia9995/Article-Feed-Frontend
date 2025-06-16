@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Lock, User, Phone, Mail, Calendar, Tag, Check, AlertCircle, Save, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, Tag, Check, AlertCircle, Save, Eye, EyeOff } from 'lucide-react';
 import type { AppDispatch, RootState } from '../redux/store';
-import { updateProfile, userLogout } from '../redux/actions/authAction';
+import { updateProfile } from '../redux/actions/authAction';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import toast from 'react-hot-toast';

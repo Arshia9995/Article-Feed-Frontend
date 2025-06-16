@@ -22,7 +22,7 @@ const VerifyOTP: React.FC = () => {
   const location = useLocation();
   const [countdown, setCountdown] = useState(600); 
   
-  const { OtpVerification, loading } = useAppSelector((state) => state.user);
+  const { OtpVerification } = useAppSelector((state) => state.user);
   const email = location.state?.email;
 
   const initialValues = {

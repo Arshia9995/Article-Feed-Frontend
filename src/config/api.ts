@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type { AxiosInstance } from 'axios';
 import { baseUrl } from './constants';
 import { AxiosError } from 'axios';
 
